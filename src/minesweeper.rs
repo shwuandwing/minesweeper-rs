@@ -232,14 +232,13 @@ impl Minesweeper {
             }
 
             if self.neighbor_counts[index] == 0 {
-                self.push_if_unmarked(&mut sweeps, current_x - 1, current_y - 1)?;
-                self.push_if_unmarked(&mut sweeps, current_x, current_y - 1)?;
-                self.push_if_unmarked(&mut sweeps, current_x + 1, current_y - 1)?;
-                self.push_if_unmarked(&mut sweeps, current_x + 1, current_y)?;
-                self.push_if_unmarked(&mut sweeps, current_x + 1, current_y + 1)?;
-                self.push_if_unmarked(&mut sweeps, current_x, current_y + 1)?;
-                self.push_if_unmarked(&mut sweeps, current_x - 1, current_y + 1)?;
-                self.push_if_unmarked(&mut sweeps, current_x - 1, current_y)?;
+                for x in -1..=1 {
+                    for y in -1..=1 {
+                        if !(x == 0 && y == 0) {
+                            self.push_if_unmarked(&mut sweeps, current_x + x, current_y + y)?;
+                        }
+                    }
+                }
             }
 
             sweeps.pop_front().unwrap();
