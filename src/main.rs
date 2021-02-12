@@ -6,7 +6,7 @@ mod numerics;
 mod visual_grid;
 mod window_target;
 
-use interop::{create_dispatcher_queue_controller_for_current_thread, ro_initialize, RoInitType};
+use interop::create_dispatcher_queue_controller_for_current_thread;
 use minesweeper::Minesweeper;
 use window_target::CompositionDesktopWindowTargetSource;
 use winit::{
@@ -17,8 +17,8 @@ use winit::{
 
 use bindings::windows::{foundation::numerics::Vector2, ui::composition::Compositor};
 
-fn run() -> winrt::Result<()> {
-    ro_initialize(RoInitType::MultiThreaded)?;
+fn run() -> windows::Result<()> {
+    windows::initialize_sta()?;
     let _controller = create_dispatcher_queue_controller_for_current_thread()?;
 
     let event_loop = EventLoop::new();

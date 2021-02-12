@@ -1,14 +1,15 @@
-use crate::interop::CompositorDesktopInterop;
 use bindings::windows::ui::composition::{desktop::DesktopWindowTarget, Compositor};
+use bindings::windows::win32::windows_and_messaging::HWND;
+use bindings::windows::win32::winrt::ICompositorDesktopInterop;
 use raw_window_handle::HasRawWindowHandle;
-use winrt::TryInto;
+use windows::Interface;
 
 pub trait CompositionDesktopWindowTargetSource {
     fn create_window_target(
         &self,
         compositor: &Compositor,
         is_topmost: bool,
-    ) -> winrt::Result<DesktopWindowTarget>;
+    ) -> windows::Result<DesktopWindowTarget>;
 }
 
 impl<T> CompositionDesktopWindowTargetSource for T
@@ -19,7 +20,7 @@ where
         &self,
         compositor: &Compositor,
         is_topmost: bool,
-    ) -> winrt::Result<DesktopWindowTarget> {
+    ) -> windows::Result<DesktopWindowTarget> {
         // Get the window handle
         let window_handle = self.raw_window_handle();
         let window_handle = match window_handle {
@@ -27,8 +28,17 @@ where
             _ => panic!("Unsupported platform!"),
         };
 
-        let compositor_desktop: CompositorDesktopInterop = compositor.try_into()?;
-        let target = compositor_desktop.create_desktop_window_target(window_handle, is_topmost)?;
-        Ok(target)
+        let compositor_desktop: ICompositorDesktopInterop = compositor.cast()?;
+        let mut result = None;
+
+        unsafe {
+            compositor_desktop
+                .CreateDesktopWindowTarget(
+                    HWND(window_handle as isize),
+                    is_topmost.into(),
+                    &mut result,
+                )
+                .and_some(result)
+        }
     }
 }

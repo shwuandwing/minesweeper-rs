@@ -1,11 +1,9 @@
-winrt::build!(
-    dependencies
-        os
-    types
-        windows::foundation::numerics::{Vector2, Vector3}
-        windows::foundation::TimeSpan
-        windows::graphics::SizeInt32
-        windows::system::DispatcherQueueController
+fn main() {
+    windows::build!(
+        windows::foundation::numerics::{Vector2, Vector3},
+        windows::foundation::TimeSpan,
+        windows::graphics::SizeInt32,
+        windows::system::DispatcherQueueController,
         windows::ui::composition::{
             AnimationIterationBehavior,
             CompositionBatchTypes,
@@ -17,11 +15,10 @@ winrt::build!(
             Compositor,
             ContainerVisual,
             SpriteVisual,
-        }
-        windows::ui::composition::desktop::DesktopWindowTarget
-        windows::ui::Colors
-);
-
-fn main() {
-    build();
+        },
+        windows::ui::composition::desktop::DesktopWindowTarget,
+        windows::ui::Colors,
+        windows::win32::system_services::CreateDispatcherQueueController,
+        windows::win32::winrt::{ICompositorDesktopInterop},
+    );
 }
